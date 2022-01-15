@@ -63,29 +63,61 @@ int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)      
 // tree insertion routine (place your code here)
 //
 
-tree_node_s* GetNewNode(int data){
-  tree_node_s* newNode =new tree_node_s(); 
-  newNode -> data =data;
-  newNode -> newNode -> right =NULL;
-  newNode -> left= newNode -> right =NULL;
-  return newNode;
+// Function to create a new Node in heap
+tree_node_s* GetNewNode(int data) {
+	tree_node_s* newNode = new tree_node_s();
+	newNode->data = data;
+	newNode->left = newNode->right = NULL;
+	return newNode;
 }
 
-tree_node_s* tree_insert( tree_node_s* root, int data )           //começar por aqui e comentar o resto
-{                                                                  //ver random_data.c pode dar jeito para qualquer merda no projeto
-  if(root == NULL) { //empty tree
-    root = GetNewNode(data);
-    return root;
-  }
-  else if (data <= root -> data){
-    root -> left = tree_insert(root -> left, data);
-
-  }
-
+// To insert data in BST, returns address of root node 
+tree_node_s* tree_insert(tree_node_s* root,int data) {
+	if(root == NULL) { // empty tree
+		root = GetNewNode(data);
+	}
+	// if data to be inserted is lesser, insert in left subtree. 
+	else if(data <= root->data) {
+		root->left = tree_insert(root->left,data);
+	}
+	// else, insert in right subtree. 
+	else {
+		root->right = tree_insert(root->right,data);
+	}
+	return root;
 }
-
-
-
+//To search an element in BST, returns true if element is found
+bool Search(tree_node_s* root,int data) { //PELO QUE PERCEBI ESTA PARTE ESTÁ NA FORMA DE UMA FUNÇÃO CAHMADA (tree_node_t *find)
+	if(root == NULL) {
+		return false;
+	}
+	else if(root->data == data) {
+		return true;
+	}
+	else if(data <= root->data) {
+		return Search(root->left,data);
+	}
+	else {
+		return Search(root->right,data);
+	}
+}
+int main() {
+	tree_node_s* root = NULL;  // Creating an empty tree
+	/*Code to test the logic*/
+	root = tree_insert(root,15);	
+	root = tree_insert(root,10);	
+	root = tree_insert(root,20);
+	root = tree_insert(root,25);
+	root = tree_insert(root,8);
+	root = tree_insert(root,12);
+	// Ask user to enter a number.  
+	int number;
+	cout<<"Enter number be searched\n";
+	cin>>number;
+	//If number is found, print "FOUND"
+	if(Search(root,number) == true) cout<<"Found\n";
+	else cout<<"Not Found\n";
+}
 
 /*--------------------------------------------------------------------
 tree_node_t *find( ... )      //devolve o ponteiro para o no, se nao devolve 0
@@ -126,17 +158,7 @@ int list( ... )         //atravessar arvore e imprimir na ordem certa o que prec
 
 
 
-//TESTE-------------------------------------------
-int main(){
-  tree_node_s* root =NULL; //Creating an empty tree
-  root = insert(&root,15);
-  root = insert(&root,10);
-  root = insert(&root,20);
 
-
-}
-
-//TESTE-------------------------------------------
 
 /*
 
