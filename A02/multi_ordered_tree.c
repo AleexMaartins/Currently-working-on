@@ -2,8 +2,11 @@
 // AED, January 2022
 //
 // Solution of the second practical assignement (multi-ordered tree)
-//
+
 // Place your student numbers and names here
+//103552, Alexandre Martins
+//104090, Tomás Rodrigues
+//103320, Bruno Gomes
 //
 
 #include <stdio.h>
@@ -21,6 +24,7 @@
 
 typedef struct tree_node_s
 {
+  int data;
   char name[MAX_NAME_SIZE + 1];                         // index 0 data item
   char zip_code[MAX_ZIP_CODE_SIZE + 1];                 // index 1 data item
   char telephone_number[MAX_TELEPHONE_NUMBER_SIZE + 1]; // index 2 data item
@@ -34,6 +38,7 @@ tree_node_t;
 // the node comparison function (do not change this)
 //
 
+/*
 int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)      //saber se vamos por à esquerda ou direita
 {
   int i,c;
@@ -52,42 +57,62 @@ int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)      
   }
   return 0;
 }
-
+*/
 
 //
 // tree insertion routine (place your code here)
 //
 
-void tree_insert( ... )           //começar por aqui e comentar o resto
-{                                 //ver random_data.c pode dar jeito para qualquer merda no projeto
+tree_node_s* GetNewNode(int data){
+  tree_node_s* newNode =new tree_node_s(); 
+  newNode -> data =data;
+  newNode -> newNode -> right =NULL;
+  newNode -> left= newNode -> right =NULL;
+  return newNode;
+}
+
+tree_node_s* tree_insert( tree_node_s* root, int data )           //começar por aqui e comentar o resto
+{                                                                  //ver random_data.c pode dar jeito para qualquer merda no projeto
+  if(root == NULL) { //empty tree
+    root = GetNewNode(data);
+    return root;
+  }
+  else if (data <= root -> data){
+    root -> left = tree_insert(root -> left, data);
+
+  }
+
 }
 
 
-//
-// tree search routine (place your code here)
-//
 
+
+/*--------------------------------------------------------------------
 tree_node_t *find( ... )      //devolve o ponteiro para o no, se nao devolve 0
-{
+{                             // tree search routine (place your code here)
 }
 
 
-//
-// tree depdth
-//
+--------------------------------------------------------------------
+*/
 
+
+
+
+/*--------------------------------------------------------------------
 int tree_depth( ... )         //altura da arvore?, qnt de nivel? ler o que é isto, ver se é igual a height
 {
 }
+--------------------------------------------------------------------
+*/
 
 
-//
-// list, i,e, traverse the tree (place your code here)
-//
-
+/*--------------------------------------------------------------------
 int list( ... )         //atravessar arvore e imprimir na ordem certa o que precisamos aqui, slides aula teorica?
-{
+{                       // list, i,e, traverse the tree (place your code here)
 }
+--------------------------------------------------------------------
+*/
 
 
 //
@@ -101,6 +126,19 @@ int list( ... )         //atravessar arvore e imprimir na ordem certa o que prec
 
 
 
+//TESTE-------------------------------------------
+int main(){
+  tree_node_s* root =NULL; //Creating an empty tree
+  root = insert(&root,15);
+  root = insert(&root,10);
+  root = insert(&root,20);
+
+
+}
+
+//TESTE-------------------------------------------
+
+/*
 
 int main(int argc,char **argv)
 {
@@ -128,7 +166,7 @@ int main(int argc,char **argv)
     return 1;
   }
   // generate all data
-  tree_node_t *persons = (tree_node_t *)calloc((size_t)n_persons,sizeof(tree_node_t));
+  tree_node_t *persons = (tree_node_t *)calloc((size_t)n_persons,sizeof(tree_node_t));      //nr de bytes dos elementos que vamos alocar e o nr de elementos do array
   if(persons == NULL)
   {
     fprintf(stderr,"Output memory!\n");
@@ -195,4 +233,6 @@ int main(int argc,char **argv)
   // clean up --- don't forget to test your program with valgrind, we don't want any memory leaks
   free(persons);
   return 0;
+  
 }
+*/
