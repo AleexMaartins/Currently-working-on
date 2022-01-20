@@ -91,10 +91,22 @@ tree_node_t *find( tree_node_t *link, int tree_index )  //NAO TENHO A CERTEZA DE
 // tree depdth
 //
 
-int tree_depth( ... )
+int tree_depth( tree_node_t *link, int desired_depth )
 {
+if(link == NULL)
+return 0; // no node
+if(desired_depth == 0)
+{
+visit(link);
+return 1; // found a node at the desired depth
 }
-
+return recursive_breadth_first(node->left,desired_depth - 1) | recursive_breadth_first(node->right,desired_depth - 1);
+}
+void breadth_first(tree_node *root)
+{
+for(int desired_depth = 0;recursive_breadth_first(root,desired_depth) != 0;desired_depth++)
+;
+}
 
 //
 // list, i,e, traverse the tree (place your code here)
@@ -113,10 +125,10 @@ void list( tree_node_t *link, int tree_index) //lecture notes pagina 159
 
 
 /*
-int list( tree_node_t *link, int tree_index, int count)      //juntarpor ordem com o indice ordenado (aqueles numeros que estao à frente dos nomes etc)
-{                                                             //igual ao list mas mais avançado 2nd VERSION
+int list( tree_node_t *link, int tree_index, int count)      //juntarpor ordem com o indice ordenado (aqueles numeros que estao à frente dos nomes etc) 
+{                                                             //igual ao list mas mais avançado 2nd VERSION, mesma estrutura mais o count
 
-}
+}                                                             //nao da para atualizar o count la dentro, O COUNT VAI SER O "  PERSON #1" ou seja o valor à frente do #
 
 
 */
