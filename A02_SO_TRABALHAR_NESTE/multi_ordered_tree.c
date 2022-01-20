@@ -58,7 +58,7 @@ int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)
 // tree insertion routine (place your code here)
 //
 
-void tree_insert(tree_node_t **link, tree_node_t *new_node, int tree_index)
+void tree_insert(tree_node_t **link, tree_node_t *new_node, int tree_index)   //lecture notes 157
 {
   if(*link == NULL)
     *link = new_tree_node_t(*new_node);
@@ -77,7 +77,7 @@ void tree_insert(tree_node_t **link, tree_node_t *new_node, int tree_index)
 
 
 tree_node_t *find( tree_node_t *link, int tree_index )  //NAO TENHO A CERTEZA DESTE, NAO FEITA EM AULA
-{
+{                                                       //lecture ontes pagina 158
   if(link == NULL || link->tree_index == tree_index)
     return link;
   if(tree_index < link->tree_index)
@@ -99,14 +99,18 @@ int tree_depth( ... )
 //
 // list, i,e, traverse the tree (place your code here)
 //
-
-int list( tree_node_t *link, int tree_index)
+   
+void list( tree_node_t *link, int tree_index) //lecture notes pagina 159
 {
-  if(link == NULL)
-    return link;
-  
-
+  if(link != NULL)
+  {
+    list(link->left);
+    visit(link);
+    list(link->right);
+  }
 }
+
+
 
 /*
 int list( tree_node_t *link, int tree_index, int count)      //juntarpor ordem com o indice ordenado (aqueles numeros que estao à frente dos nomes etc)
