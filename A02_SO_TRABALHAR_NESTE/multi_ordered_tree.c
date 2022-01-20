@@ -58,16 +58,26 @@ int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)
 // tree insertion routine (place your code here)
 //
 
-void tree_insert(tree_node_t **link, tree_node_t *new_node, int tree_index)   //lecture notes 157
+void tree_insert(tree_node_t **link,tree_node_t *node, int tree_index) //link -> raiz da árvore, node -> nó que quero juntar, tree_index -> 
 {
-  if(*link == NULL)
-    *link = new_tree_node_t(*new_node);
-  else if(*new_node <= (*link)->item)
-    insert_recursive(&((*link)->left),*new_node);        //tem & porque é a unica forma de atualizar o ponteiro porque em cima tem **
-  else
-    insert_recursive(&((*link)->right),*new_node);
-}
+  if(*link == NULL){
+    *link = node;
+    return;
+  }
 
+  int c = compare_tree_nodes(*link, node, tree_index)
+  if(c == 0){
+    fprintf("Erro, nós iguais!");
+    exit(1);
+  }
+  else if(c>0){ //insere o nó na esquerda
+    tree_insert(&((*link) -> left[tree_index]), node, tree_index);
+  }
+  else{ //insere o nó na direita
+    tree_insert(&((*link) -> right[tree_index]), node, tree_index);
+  }
+
+}
 
 //
 // tree search routine (place your code here)
@@ -93,20 +103,20 @@ tree_node_t *find( tree_node_t *link, int tree_index )  //NAO TENHO A CERTEZA DE
 
 int tree_depth( tree_node_t *link, int desired_depth )
 {
-if(link == NULL)
-return 0; // no node
-if(desired_depth == 0)
+  if(link == NULL)
+    return 0; // no node
+  if(desired_depth == 0)
+  {
+    visit(link);
+    return 1; // found a node at the desired depth
+  }
+  return tree_depth(node->left,desired_depth - 1) | tree_depth(node->right,desired_depth - 1);
+  }
+void depth_first(tree_node_t *root)
 {
-visit(link);
-return 1; // found a node at the desired depth
+  for(int desired_depth = 0;depth_first(root,desired_depth) != 0;desired_depth++);
 }
-return recursive_breadth_first(node->left,desired_depth - 1) | recursive_breadth_first(node->right,desired_depth - 1);
-}
-void breadth_first(tree_node *root)
-{
-for(int desired_depth = 0;recursive_breadth_first(root,desired_depth) != 0;desired_depth++)
-;
-}
+
 
 //
 // list, i,e, traverse the tree (place your code here)
