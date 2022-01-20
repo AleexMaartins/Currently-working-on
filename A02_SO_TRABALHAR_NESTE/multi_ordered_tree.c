@@ -2,11 +2,8 @@
 // AED, January 2022
 //
 // Solution of the second practical assignement (multi-ordered tree)
-
+//
 // Place your student numbers and names here
-//103552, Alexandre Martins
-//104090, Tomás Rodrigues
-//103320, Bruno Gomes
 //
 
 #include <stdio.h>
@@ -24,7 +21,6 @@
 
 typedef struct tree_node_s
 {
-  int data;
   char name[MAX_NAME_SIZE + 1];                         // index 0 data item
   char zip_code[MAX_ZIP_CODE_SIZE + 1];                 // index 1 data item
   char telephone_number[MAX_TELEPHONE_NUMBER_SIZE + 1]; // index 2 data item
@@ -38,8 +34,7 @@ tree_node_t;
 // the node comparison function (do not change this)
 //
 
-/*
-int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)      //saber se vamos por à esquerda ou direita
+int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)
 {
   int i,c;
 
@@ -57,110 +52,74 @@ int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)      
   }
   return 0;
 }
-*/
+
 
 //
 // tree insertion routine (place your code here)
 //
 
-// Function to create a new Node in heap
-tree_node_s* GetNewNode(int data) {
-	tree_node_s* newNode = new tree_node_s();
-	newNode->data = data;
-	newNode->left = newNode->right = NULL;
-	return newNode;
-}
-
-// To insert data in BST, returns address of root node 
-tree_node_s* tree_insert(tree_node_s* root,int data) {
-	if(root == NULL) { // empty tree
-		root = GetNewNode(data);
-	}
-	// if data to be inserted is lesser, insert in left subtree. 
-	else if(data <= root->data) {
-		root->left = tree_insert(root->left,data);
-	}
-	// else, insert in right subtree. 
-	else {
-		root->right = tree_insert(root->right,data);
-	}
-	return root;
-}
-//To search an element in BST, returns true if element is found
-bool Search(tree_node_s* root,int data) { //PELO QUE PERCEBI ESTA PARTE ESTÁ NA FORMA DE UMA FUNÇÃO CAHMADA (tree_node_t *find)
-	if(root == NULL) {
-		return false;
-	}
-	else if(root->data == data) {
-		return true;
-	}
-	else if(data <= root->data) {
-		return Search(root->left,data);
-	}
-	else {
-		return Search(root->right,data);
-	}
-}
-int main() {
-	tree_node_s* root = NULL;  // Creating an empty tree
-	/*Code to test the logic*/
-	root = tree_insert(root,15);	
-	root = tree_insert(root,10);	
-	root = tree_insert(root,20);
-	root = tree_insert(root,25);
-	root = tree_insert(root,8);
-	root = tree_insert(root,12);
-	// Ask user to enter a number.  
-	int number;
-	cout<<"Enter number be searched\n";
-	cin>>number;
-	//If number is found, print "FOUND"
-	if(Search(root,number) == true) cout<<"Found\n";
-	else cout<<"Not Found\n";
-}
-
-/*--------------------------------------------------------------------
-tree_node_t *find( ... )      //devolve o ponteiro para o no, se nao devolve 0
-{                             // tree search routine (place your code here)
+void tree_insert(tree_node_t **link, tree_node_t *new_node, int tree_index)
+{
+  if(*link == NULL)
+    *link = new_tree_node_t(*new_node);
+  else if(*new_node <= (*link)->item)
+    insert_recursive(&((*link)->left),*new_node);        //tem & porque é a unica forma de atualizar o ponteiro porque em cima tem **
+  else
+    insert_recursive(&((*link)->right),*new_node);
 }
 
 
---------------------------------------------------------------------
-*/
+//
+// tree search routine (place your code here)
+//
 
 
 
 
-/*--------------------------------------------------------------------
-int tree_depth( ... )         //altura da arvore?, qnt de nivel? ler o que é isto, ver se é igual a height
+tree_node_t *find( tree_node_t *link, int tree_index )  //NAO TENHO A CERTEZA DESTE, NAO FEITA EM AULA
+{
+  if(link == NULL || link->tree_index == tree_index)
+    return link;
+  if(tree_index < link->tree_index)
+    return find(link->left,tree_index);
+  else
+    return find(link->right,tree_index);
+}
+
+
+//
+// tree depdth
+//
+
+int tree_depth( ... )
 {
 }
---------------------------------------------------------------------
-*/
 
 
-/*--------------------------------------------------------------------
-int list( ... )         //atravessar arvore e imprimir na ordem certa o que precisamos aqui, slides aula teorica?
-{                       // list, i,e, traverse the tree (place your code here)
+//
+// list, i,e, traverse the tree (place your code here)
+//
+
+int list( tree_node_t *link, int tree_index)
+{
+  if(link == NULL)
+    return link;
+  
+
 }
---------------------------------------------------------------------
-*/
 
+/*
+int list( tree_node_t *link, int tree_index, int count)      //juntarpor ordem com o indice ordenado (aqueles numeros que estao à frente dos nomes etc)
+{                                                             //igual ao list mas mais avançado 2nd VERSION
+
+}
+
+
+*/
 
 //
 // main program
 //
-
-
-
-
-
-
-
-
-
-
-/*
 
 int main(int argc,char **argv)
 {
@@ -188,7 +147,7 @@ int main(int argc,char **argv)
     return 1;
   }
   // generate all data
-  tree_node_t *persons = (tree_node_t *)calloc((size_t)n_persons,sizeof(tree_node_t));      //nr de bytes dos elementos que vamos alocar e o nr de elementos do array
+  tree_node_t *persons = (tree_node_t *)calloc((size_t)n_persons,sizeof(tree_node_t));
   if(persons == NULL)
   {
     fprintf(stderr,"Output memory!\n");
@@ -255,6 +214,4 @@ int main(int argc,char **argv)
   // clean up --- don't forget to test your program with valgrind, we don't want any memory leaks
   free(persons);
   return 0;
-  
 }
-*/
