@@ -121,17 +121,20 @@ void depth_first(tree_node_t *root)
 //
 // list, i,e, traverse the tree (place your code here)
 //
-/*
+
 void list( tree_node_t *link, int tree_index) //lecture notes pagina 159
 {
-  if(link != NULL)
-  {
-    list(link->left);
-    visit(link);
-    list(link->right);
-  }
+  if(link == NULL)
+    return;
+  
+  list(link->left[tree_index], tree_index);
+  printf("telefone e quês");
+  printf("");
+  printf("");
+
+  visit(link);
+  list(link->right[tree_index], tree_index);
 }
-*/
 
 
 /*
@@ -207,6 +210,10 @@ int main(int argc,char **argv)
   dt = cpu_time() - dt;
   printf("Tree creation time (%d persons): %.3es\n",n_persons,dt);
 
+
+  //chamar list
+  for(int main_index = 0;main_index < 3;main_index++)
+    list( roots[main_index], main_index);
 
 
 /*
