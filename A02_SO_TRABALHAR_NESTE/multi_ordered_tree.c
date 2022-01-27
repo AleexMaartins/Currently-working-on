@@ -128,8 +128,8 @@ void list( tree_node_t *link, int tree_index) //lecture notes pagina 159
     return;
   
   list(link->left[tree_index], tree_index);
-  printf("telefone e quês");
-  printf("");
+  printf("%s\n", link->name);
+  printf("link->");
   printf("");
 
   visit(link);
