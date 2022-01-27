@@ -129,8 +129,8 @@ void list( tree_node_t *link, int tree_index) //lecture notes pagina 159
   
   list(link->left[tree_index], tree_index);
   printf("%s\n", link->name);
-  printf("link->");
-  printf("");
+  printf("%s\n", link->zip_code);
+  printf("%s\n", link->telephone_number);
 
   visit(link);
   list(link->right[tree_index], tree_index);
