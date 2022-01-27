@@ -86,9 +86,9 @@ void tree_insert(tree_node_t **link,tree_node_t *node, int tree_index) //link ->
 
 
 /*
-tree_node_t *find( tree_node_t *link, int tree_index )  //NAO TENHO A CERTEZA DESTE, NAO FEITA EM AULA
-{                                                       //lecture ontes pagina 158
-  if(link == NULL || link->tree_index == tree_index)
+tree_node_t *find( tree_node_t *link, tree_node_t* node, int tree_index)  //NAO TENHO A CERTEZA DESTE, NAO FEITA EM AULA
+{                                                                   //lecture ontes pagina 158
+  if(link == NULL)
     return link;
   if(tree_index < link->tree_index)
     return find(link->left,tree_index);
@@ -132,8 +132,8 @@ void list( tree_node_t *link, int tree_index) //lecture notes pagina 159
   printf("%s\n", link->zip_code);
   printf("%s\n", link->telephone_number);
 
-  visit(link);
   list(link->right[tree_index], tree_index);
+
 }
 
 
