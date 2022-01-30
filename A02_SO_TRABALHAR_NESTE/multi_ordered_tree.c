@@ -58,23 +58,23 @@ int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)
 // tree insertion routine (place your code here)
 //
 
-void tree_insert(tree_node_t **link,tree_node_t *node, int tree_index) //link -> raiz da árvore, node -> nó que quero juntar, tree_index -> 
+void tree_insert(tree_node_t **link,tree_node_t *node, int main_index) //link -> raiz da árvore, node -> nó que quero juntar, main_index -> 
 {
   if(*link == NULL){
     *link = node;
     return;
   }
 
-  int c = compare_tree_nodes(*link, node, tree_index);
+  int c = compare_tree_nodes(*link, node, main_index);
   if(c == 0){
     printf("Erro, nós iguais!");
     exit(1);
   }
   else if(c>0){ //insere o nó na esquerda
-    tree_insert(&((*link) -> left[tree_index]), node, tree_index);
+    tree_insert(&((*link) -> left[main_index]), node, main_index);
   }
   else{ //insere o nó na direita
-    tree_insert(&((*link) -> right[tree_index]), node, tree_index);
+    tree_insert(&((*link) -> right[main_index]), node, main_index);
   }
 
 }
@@ -85,60 +85,67 @@ void tree_insert(tree_node_t **link,tree_node_t *node, int tree_index) //link ->
 
 
 
-/*
-tree_node_t *find( tree_node_t *link, tree_node_t* node, int tree_index)  //NAO TENHO A CERTEZA DESTE, NAO FEITA EM AULA
+
+tree_node_t *find( tree_node_t *link, tree_node_t* node, int main_index)  //NAO TENHO A CERTEZA DESTE, NAO FEITA EM AULA
 {                                                                   //lecture ontes pagina 158
-  if(link == NULL)
-    return link;
-  if(tree_index < link->tree_index)
-    return find(link->left,tree_index);
+  if(link == NULL){
+    return NULL;
+  }
+  int alfa = compare_tree_nodes(node, link, main_index);
+  
+  if(alfa == 0)
+    return link;  
+  if(alfa < 0){
+    return find(link->left[main_index],node,main_index);
+  }
   else
-    return find(link->right,tree_index);
+    return find(link->right[main_index],node,main_index);
 }
-*/
+
 
 //
 // tree depdth
 //
-/*
-int tree_depth( tree_node_t *link, int desired_depth )
+
+int tree_depth(tree_node_t *node,int main_index)
 {
-  if(link == NULL)
-    return 0; // no node
-  if(desired_depth == 0)
-  {
-    visit(link);
-    return 1; // found a node at the desired depth
-  }
-  return tree_depth(node->left,desired_depth - 1) | tree_depth(node->right,desired_depth - 1);
-  }
-void depth_first(tree_node_t *root)
-{
-  for(int desired_depth = 0;depth_first(root,desired_depth) != 0;desired_depth++);
-}
-*/
+    if (node == NULL)
+        return 0;
+    else {
+        /* compute the depth of each subtree */
+        int lDepth = tree_depth(node->left[main_index],main_index);
+        int rDepth = tree_depth(node->right[main_index],main_index);
+ 
+        /* use the larger one */
+        if (lDepth > rDepth)
+            return (lDepth + 1);
+        else
+            return (rDepth + 1);
+    }
+} 
+
 
 //
 // list, i,e, traverse the tree (place your code here)
 //
 
-void list( tree_node_t *link, int tree_index) //lecture notes pagina 159
+void list( tree_node_t *link, int main_index) //lecture notes pagina 159
 {
   if(link == NULL)
     return;
   
-  list(link->left[tree_index], tree_index);
+  list(link->left[main_index], main_index);
   printf("%s\n", link->name);
   printf("%s\n", link->zip_code);
   printf("%s\n", link->telephone_number);
 
-  list(link->right[tree_index], tree_index);
+  list(link->right[main_index], main_index);
 
 }
 
 
 /*
-int list( tree_node_t *link, int tree_index, int count)      //juntarpor ordem com o indice ordenado (aqueles numeros que estao à frente dos nomes etc) 
+int list( tree_node_t *link, int main_index, int count)      //juntarpor ordem com o indice ordenado (aqueles numeros que estao à frente dos nomes etc) 
 {                                                             //igual ao list mas mais avançado 2nd VERSION, mesma estrutura mais o count
 
 }                                                             //nao da para atualizar o count la dentro, O COUNT VAI SER O "  PERSON #1" ou seja o valor à frente do #
@@ -216,7 +223,7 @@ int main(int argc,char **argv)
     list( roots[main_index], main_index);
 
 
-/*
+
   // search the tree
   for(int main_index = 0;main_index < 3;main_index++)
   {
@@ -234,7 +241,7 @@ int main(int argc,char **argv)
     printf("Tree search time (%d persons, index %d): %.3es\n",n_persons,main_index,dt);
   }
 
-
+/*
 
 
   // compute the largest tree depdth
