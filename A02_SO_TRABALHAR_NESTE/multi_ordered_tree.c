@@ -233,7 +233,7 @@ int main(int argc,char **argv)
       tree_node_t n = persons[i]; // make a copy of the node data
       if(find( ... ) != &(persons[i])) // place your code here to find a given person, searching for it using the tree with number main_index
       {
-        fprintf(stderr,"person %d not found using index %d\n",i,main_index);
+        fprintf(stderr,"person %d not found using index %d\n",i,main_index); //asdasd
         return 1;
       }
     }
