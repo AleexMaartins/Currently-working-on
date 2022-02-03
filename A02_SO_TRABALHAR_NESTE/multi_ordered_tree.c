@@ -130,21 +130,21 @@ int tree_depth(tree_node_t *node,int tree_index) //node -> raiz
 //
 // list, i,e, traverse the tree (place your code here)
 //
-
-void list(tree_node_t *link, int tree_index, int *c)
+int count=0;
+void list(tree_node_t *link, int tree_index)
 {
   
-  if(link == NULL){
-    return;
-  }
-
-  list(link->left[tree_index],tree_index,c);
-  printf("Person #%d\n",*c++);
+  if(link != NULL){
+  list(link->left[tree_index],tree_index);
+  count++;
+  printf("Person #%d\n",count);
   printf("name --------------- %s\n", link->name);
   printf("zip code ----------- %s\n", link->zip_code);
   printf("telephone number --- %s\n", link->telephone_number);
 
-  list(link->right[tree_index], tree_index,c);
+  list(link->right[tree_index], tree_index);
+  }
+  return EXIT_SUCCESS;
 }
 
 
@@ -241,9 +241,8 @@ int main(int argc,char **argv)
         main_index = 0;
       if(main_index > 2)
         main_index = 2;
-      printf("List of persons:\n");
-      int cnt = 1;
-      (void)list(roots[main_index],main_index,&cnt); // place your code here to traverse, in order, the tree with number main_index
+     printf("List of persons:\n");
+     (void)list(roots[main_index], main_index); // place your code here to traverse, in order, the tree with number main_index
     }
     // place your own options here
   }
