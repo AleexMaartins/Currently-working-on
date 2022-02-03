@@ -58,24 +58,23 @@ int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)
 // tree insertion routine (place your code here)
 //
 
-void tree_insert(tree_node_t **link,tree_node_t *node, int main_index) //link -> raiz da árvore, node -> nó que quero juntar, main_index -> 
+void tree_insert(tree_node_t **link,tree_node_t *node, int tree_index) //link -> raiz da árvore, node -> nó que quero juntar, tree_index -> 
 {
   if(*link == NULL){
     *link = node;
     return;
   }
 
-  int c = compare_tree_nodes(*link, node, main_index);
+  int c = compare_tree_nodes(*link, node, tree_index);
   if(c == 0){
     printf("Erro, nós iguais!");
     exit(1);
   }
   else if(c>0){ //insere o nó na esquerda
-    tree_insert(&((*link) -> left[main_index]), node, main_index);
-    
+    tree_insert(&((*link) -> left[tree_index]), node, tree_index);
   }
   else{ //insere o nó na direita
-    tree_insert(&((*link) -> right[main_index]), node, main_index);
+    tree_insert(&((*link) -> right[tree_index]), node, tree_index);
   }
 
 }
@@ -95,7 +94,6 @@ tree_node_t *find(tree_node_t *link, tree_node_t *roots, int idx)
     return link;
   }
   if(c<0){
-
     return find(link->left[idx],roots,idx);
   }
   else{
@@ -108,14 +106,14 @@ tree_node_t *find(tree_node_t *link, tree_node_t *roots, int idx)
 // tree depth
 //
 
-int tree_depth(tree_node_t *node,int main_index) //node -> raiz
+int tree_depth(tree_node_t *node,int tree_index) //node -> raiz
 {
   if(node == NULL){
     return 0;
   }
   else{ //calcular profundidade de cada ramo
-    int rBranchDepth = tree_depth(node->right[main_index],main_index);
-    int lBranchDepth = tree_depth(node->left[main_index],main_index);
+    int rBranchDepth = tree_depth(node->right[tree_index],tree_index);
+    int lBranchDepth = tree_depth(node->left[tree_index],tree_index);
 
 
     if(lBranchDepth > rBranchDepth){ //retorna o maior ramo
@@ -133,49 +131,22 @@ int tree_depth(tree_node_t *node,int main_index) //node -> raiz
 // list, i,e, traverse the tree (place your code here)
 //
 
-
-void list( tree_node_t *link, int main_index, int *count)                                        //juntarpor ordem com o indice ordenado (aqueles numeros que estao à frente dos nomes etc) 
-{                                                                                              //igual ao list mas mais avançado 2nd VERSION, mesma estrutura mais o count
- if(link == NULL){
+void list(tree_node_t *link, int tree_index, int *c)
+{
+  
+  if(link == NULL){
     return;
   }
-  list(link->left[main_index],main_index,count);
-  printf("\n");
-  printf("Person # %d", *count++);
-  printf("\n");
-  printf("name --------------- ");
-  printf("%s\n", link->name);
-  printf("zip_code ----------- ");
-  printf("%s\n", link->zip_code);
-  printf("telephone_number --- ");
-  printf("%s\n", link->telephone_number);
-  printf("\n");
 
-  list(link->right[main_index], main_index,count);
-}  
-
-/*
-int list( tree_node_t *link, int main_index, int count)      //juntarpor ordem com o indice ordenado (aqueles numeros que estao à frente dos nomes etc) 
-{                                                             //igual ao list mas mais avançado 2nd VERSION, mesma estrutura mais o count
- if(link == NULL){
-    return 0;
-  }
-
-  list(link->left[main_index],main_index,count);
+  list(link->left[tree_index],tree_index,c);
   printf("\n");
-  printf("Person # %d", count);
-  printf("\n");
-  printf("name --------------- ");
-  printf("%s\n", link->name, count);
-  printf("zip_code ----------- ");
-  printf("%s\n", link->zip_code);
-  printf("telephone_number --- ");
-  printf("%s\n", link->telephone_number);
-  printf("\n");
-  list(link->right[main_index], main_index,count+1);
- 
-}                                                             //nao da para atualizar o count la dentro, O COUNT VAI SER O "  PERSON #1" ou seja o valor à frente do #
-*/
+  printf("Person #%d\n",*c++);
+  printf("name --------------- %s\n", link->name);
+  printf("zip code ----------- %s\n", link->zip_code);
+  printf("telephone number --- %s\n", link->telephone_number);
+  printf("\n"); 
+  list(link->right[tree_index], tree_index,c);
+}
 
 
 //
@@ -185,7 +156,7 @@ int list( tree_node_t *link, int main_index, int count)      //juntarpor ordem c
 int main(int argc,char **argv)
 {
   double dt;
-
+  
   // process the command line arguments
   if(argc < 3)
   {
@@ -223,11 +194,6 @@ int main(int argc,char **argv)
     for(int j = 0;j < 3;j++)
       persons[i].left[j] = persons[i].right[j] = NULL; // make sure the pointers are initially NULL
   }
-
- //comentar apartir daqui
-
-
-
   // create the ordered binary trees
   dt = cpu_time();
   tree_node_t *roots[3]; // three indices, three roots
@@ -238,9 +204,6 @@ int main(int argc,char **argv)
       tree_insert(&(roots[main_index]),&(persons[i]),main_index) ; // place your code here to insert &(persons[i]) in the tree with number main_index
   dt = cpu_time() - dt;
   printf("Tree creation time (%d persons): %.3es\n",n_persons,dt);
-
-
-
   // search the tree
   for(int main_index = 0;main_index < 3;main_index++)
   {
@@ -257,9 +220,6 @@ int main(int argc,char **argv)
     dt = cpu_time() - dt;
     printf("Tree search time (%d persons, index %d): %.3es\n",n_persons,main_index,dt);
   }
-
-
-
   // compute the largest tree depdth
   for(int main_index = 0;main_index < 3;main_index++)
   {
@@ -268,10 +228,8 @@ int main(int argc,char **argv)
     dt = cpu_time() - dt;
     printf("Tree depth for index %d: %d (done in %.3es)\n",main_index,depth,dt);
   }
-
-
-
   // process the command line optional arguments
+  
   for(int i = 3;i < argc;i++)
   {
     if(strncmp(argv[i],"-list",5) == 0)
@@ -282,8 +240,8 @@ int main(int argc,char **argv)
       if(main_index > 2)
         main_index = 2;
       printf("List of persons:\n");
-      int count =1;
-      (void)list(roots[main_index],main_index,&count); // place your code here to traverse, in order, the tree with number main_index
+      int cnt = 1;
+      (void)list(roots[main_index],main_index,&cnt); // place your code here to traverse, in order, the tree with number main_index
     }
     // place your own options here
   }
