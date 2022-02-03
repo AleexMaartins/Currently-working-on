@@ -58,23 +58,23 @@ int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)
 // tree insertion routine (place your code here)
 //
 
-void tree_insert(tree_node_t **link,tree_node_t *node, int tree_index) //link -> raiz da árvore, node -> nó que quero juntar, tree_index -> 
+void tree_insert(tree_node_t **link,tree_node_t *node, int main_index) //link -> raiz da árvore, node -> nó que quero juntar, main_index -> 
 {
   if(*link == NULL){
     *link = node;
     return;
   }
 
-  int c = compare_tree_nodes(*link, node, tree_index);
+  int c = compare_tree_nodes(*link, node, main_index);
   if(c == 0){
     printf("Erro, nós iguais!");
     exit(1);
   }
   else if(c>0){ //insere o nó na esquerda
-    tree_insert(&((*link) -> left[tree_index]), node, tree_index);
+    tree_insert(&((*link) -> left[main_index]), node, main_index);
   }
   else{ //insere o nó na direita
-    tree_insert(&((*link) -> right[tree_index]), node, tree_index);
+    tree_insert(&((*link) -> right[main_index]), node, main_index);
   }
 
 }
@@ -106,14 +106,14 @@ tree_node_t *find(tree_node_t *link, tree_node_t *roots, int idx)
 // tree depth
 //
 
-int tree_depth(tree_node_t *node,int tree_index) //node -> raiz
+int tree_depth(tree_node_t *node,int main_index) //node -> raiz
 {
   if(node == NULL){
     return 0;
   }
   else{ //calcular profundidade de cada ramo
-    int rBranchDepth = tree_depth(node->right[tree_index],tree_index);
-    int lBranchDepth = tree_depth(node->left[tree_index],tree_index);
+    int rBranchDepth = tree_depth(node->right[main_index],main_index);
+    int lBranchDepth = tree_depth(node->left[main_index],main_index);
 
 
     if(lBranchDepth > rBranchDepth){ //retorna o maior ramo
@@ -131,20 +131,20 @@ int tree_depth(tree_node_t *node,int tree_index) //node -> raiz
 // list, i,e, traverse the tree (place your code here)
 //
 int count=0;
-void list(tree_node_t *link, int tree_index)
+void list(tree_node_t *link, int main_index)
 {
   
   if(link != NULL){
-  list(link->left[tree_index],tree_index);
+  list(link->left[main_index],main_index);
   count++;
   printf("Person #%d\n",count);
   printf("name --------------- %s\n", link->name);
   printf("zip code ----------- %s\n", link->zip_code);
   printf("telephone number --- %s\n", link->telephone_number);
 
-  list(link->right[tree_index], tree_index);
+  list(link->right[main_index], main_index);
   }
-  return EXIT_SUCCESS;
+  return ;
 }
 
 
