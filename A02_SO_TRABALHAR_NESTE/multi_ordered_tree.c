@@ -50,7 +50,7 @@ int compare_tree_nodes(tree_node_t *node1,tree_node_t *node2,int main_idx)
       return c; // different on this index, so return
     main_idx = (main_idx == 2) ? 0 : main_idx + 1; // advance to the next index
   }
-  return 0;
+  return 0; //retorna 0 quando os 3 parâmetros forem iguais
 }
 
 
@@ -72,6 +72,7 @@ void tree_insert(tree_node_t **link,tree_node_t *node, int main_index) //link ->
   }
   else if(c>0){ //insere o nó na esquerda
     tree_insert(&((*link) -> left[main_index]), node, main_index);
+    
   }
   else{ //insere o nó na direita
     tree_insert(&((*link) -> right[main_index]), node, main_index);
@@ -79,79 +80,103 @@ void tree_insert(tree_node_t **link,tree_node_t *node, int main_index) //link ->
 
 }
 
+
 //
 // tree search routine (place your code here)
 //
 
-
-
-
-tree_node_t *find( tree_node_t *link, tree_node_t* node, int main_index)  //NAO TENHO A CERTEZA DESTE, NAO FEITA EM AULA
-{                                                                   //lecture ontes pagina 158
+tree_node_t *find(tree_node_t *link, tree_node_t *roots, int idx)
+{
   if(link == NULL){
     return NULL;
   }
-  int alfa = compare_tree_nodes(node, link, main_index);
-  
-  if(alfa == 0)
-    return link;  
-  if(alfa < 0){
-    return find(link->left[main_index],node,main_index);
+  int c = compare_tree_nodes(roots,link,idx);
+  if(c==0){
+    return link;
   }
-  else
-    return find(link->right[main_index],node,main_index);
+  if(c<0){
+
+    return find(link->left[idx],roots,idx);
+  }
+  else{
+    return find(link->right[idx],roots,idx);
+  }
 }
 
 
 //
-// tree depdth
+// tree depth
 //
 
-int tree_depth(tree_node_t *node,int main_index)
+int tree_depth(tree_node_t *node,int main_index) //node -> raiz
 {
-    if (node == NULL)
-        return 0;
-    else {
-        /* compute the depth of each subtree */
-        int lDepth = tree_depth(node->left[main_index],main_index);
-        int rDepth = tree_depth(node->right[main_index],main_index);
- 
-        /* use the larger one */
-        if (lDepth > rDepth)
-            return (lDepth + 1);
-        else
-            return (rDepth + 1);
+  if(node == NULL){
+    return 0;
+  }
+  else{ //calcular profundidade de cada ramo
+    int rBranchDepth = tree_depth(node->right[main_index],main_index);
+    int lBranchDepth = tree_depth(node->left[main_index],main_index);
+
+
+    if(lBranchDepth > rBranchDepth){ //retorna o maior ramo
+      return (lBranchDepth + 1);
     }
-} 
+    else{
+      return (rBranchDepth + 1);
+    }
+
+  }
+}
 
 
 //
 // list, i,e, traverse the tree (place your code here)
 //
 
-void list( tree_node_t *link, int main_index) //lecture notes pagina 159
-{
-  if(link == NULL)
+
+void list( tree_node_t *link, int main_index, int *count)                                        //juntarpor ordem com o indice ordenado (aqueles numeros que estao à frente dos nomes etc) 
+{                                                                                              //igual ao list mas mais avançado 2nd VERSION, mesma estrutura mais o count
+ if(link == NULL){
     return;
-  
-  list(link->left[main_index], main_index);
+  }
+  list(link->left[main_index],main_index,count);
+  printf("\n");
+  printf("Person # %d", *count++);
+  printf("\n");
+  printf("name --------------- ");
   printf("%s\n", link->name);
+  printf("zip_code ----------- ");
   printf("%s\n", link->zip_code);
+  printf("telephone_number --- ");
   printf("%s\n", link->telephone_number);
+  printf("\n");
 
-  list(link->right[main_index], main_index);
-
-}
-
+  list(link->right[main_index], main_index,count);
+}  
 
 /*
 int list( tree_node_t *link, int main_index, int count)      //juntarpor ordem com o indice ordenado (aqueles numeros que estao à frente dos nomes etc) 
 {                                                             //igual ao list mas mais avançado 2nd VERSION, mesma estrutura mais o count
+ if(link == NULL){
+    return 0;
+  }
 
+  list(link->left[main_index],main_index,count);
+  printf("\n");
+  printf("Person # %d", count);
+  printf("\n");
+  printf("name --------------- ");
+  printf("%s\n", link->name, count);
+  printf("zip_code ----------- ");
+  printf("%s\n", link->zip_code);
+  printf("telephone_number --- ");
+  printf("%s\n", link->telephone_number);
+  printf("\n");
+  list(link->right[main_index], main_index,count+1);
+ 
 }                                                             //nao da para atualizar o count la dentro, O COUNT VAI SER O "  PERSON #1" ou seja o valor à frente do #
-
-
 */
+
 
 //
 // main program
@@ -183,7 +208,7 @@ int main(int argc,char **argv)
     return 1;
   }
   // generate all data
-  tree_node_t *persons = (tree_node_t *)calloc((size_t)n_persons,sizeof(tree_node_t));
+  tree_node_t *persons = (tree_node_t *)calloc((size_t)n_persons,sizeof(tree_node_t)); //allocate numbers of nodes
   if(persons == NULL)
   {
     fprintf(stderr,"Output memory!\n");
@@ -198,11 +223,8 @@ int main(int argc,char **argv)
     for(int j = 0;j < 3;j++)
       persons[i].left[j] = persons[i].right[j] = NULL; // make sure the pointers are initially NULL
   }
-  //comentar apartir daqui
 
-
-
-
+ //comentar apartir daqui
 
 
 
@@ -213,14 +235,9 @@ int main(int argc,char **argv)
     roots[main_index] = NULL;
   for(int i = 0;i < n_persons;i++)
     for(int main_index = 0;main_index < 3;main_index++)
-      tree_insert(&(roots[main_index]),&(persons[i]), main_index) ; // place your code here to insert &(persons[i]) in the tree with number main_index
+      tree_insert(&(roots[main_index]),&(persons[i]),main_index) ; // place your code here to insert &(persons[i]) in the tree with number main_index
   dt = cpu_time() - dt;
   printf("Tree creation time (%d persons): %.3es\n",n_persons,dt);
-
-
-  //chamar list
-  for(int main_index = 0;main_index < 3;main_index++)
-    list( roots[main_index], main_index);
 
 
 
@@ -231,9 +248,9 @@ int main(int argc,char **argv)
     for(int i = 0;i < n_persons;i++)
     {
       tree_node_t n = persons[i]; // make a copy of the node data
-      if(find( ... ) != &(persons[i])) // place your code here to find a given person, searching for it using the tree with number main_index
+      if(find(roots[main_index],&n,main_index) != &(persons[i])) // place your code here to find a given person, searching for it using the tree with number main_index
       {
-        fprintf(stderr,"person %d not found using index %d\n",i,main_index); //asdasd
+        fprintf(stderr,"person %d not found using index %d\n",i,main_index);
         return 1;
       }
     }
@@ -241,17 +258,19 @@ int main(int argc,char **argv)
     printf("Tree search time (%d persons, index %d): %.3es\n",n_persons,main_index,dt);
   }
 
-/*
 
 
   // compute the largest tree depdth
   for(int main_index = 0;main_index < 3;main_index++)
   {
     dt = cpu_time();
-    int depth = tree_depth( ... ); // place your code here to compute the depth of the tree with number main_index
+    int depth = tree_depth(roots[main_index],main_index); // place your code here to compute the depth of the tree with number main_index
     dt = cpu_time() - dt;
     printf("Tree depth for index %d: %d (done in %.3es)\n",main_index,depth,dt);
   }
+
+
+
   // process the command line optional arguments
   for(int i = 3;i < argc;i++)
   {
@@ -263,17 +282,12 @@ int main(int argc,char **argv)
       if(main_index > 2)
         main_index = 2;
       printf("List of persons:\n");
-      (void)list( ... ); // place your code here to traverse, in order, the tree with number main_index
+      int count =1;
+      (void)list(roots[main_index],main_index,&count); // place your code here to traverse, in order, the tree with number main_index
     }
     // place your own options here
   }
   // clean up --- don't forget to test your program with valgrind, we don't want any memory leaks
-
-
-
-
-*/
-
   free(persons);
   return 0;
 }
