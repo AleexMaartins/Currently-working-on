@@ -139,12 +139,11 @@ void list(tree_node_t *link, int tree_index, int *c)
   }
 
   list(link->left[tree_index],tree_index,c);
-  printf("\n");
   printf("Person #%d\n",*c++);
   printf("name --------------- %s\n", link->name);
   printf("zip code ----------- %s\n", link->zip_code);
   printf("telephone number --- %s\n", link->telephone_number);
-  printf("\n"); 
+
   list(link->right[tree_index], tree_index,c);
 }
 
@@ -194,6 +193,7 @@ int main(int argc,char **argv)
     for(int j = 0;j < 3;j++)
       persons[i].left[j] = persons[i].right[j] = NULL; // make sure the pointers are initially NULL
   }
+
   // create the ordered binary trees
   dt = cpu_time();
   tree_node_t *roots[3]; // three indices, three roots
@@ -204,6 +204,8 @@ int main(int argc,char **argv)
       tree_insert(&(roots[main_index]),&(persons[i]),main_index) ; // place your code here to insert &(persons[i]) in the tree with number main_index
   dt = cpu_time() - dt;
   printf("Tree creation time (%d persons): %.3es\n",n_persons,dt);
+  
+  
   // search the tree
   for(int main_index = 0;main_index < 3;main_index++)
   {
