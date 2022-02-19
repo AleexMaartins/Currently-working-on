@@ -211,8 +211,7 @@ header{
   }
   /*-----------------------------VIDEO---------------*/
 
-.btn{
-    border: 1px solid #fff;
+  .btn{
     padding: 10px 30px;
     color: #fff ;
     background-color: transparent;
@@ -222,21 +221,46 @@ header{
     transition: 1s ease;
   }
 
-.btn:hover{
+  .butao{
+    border: 1px solid #fff;
+    padding: 10px 30px;
+    color: #fff ;
+    background-color: transparent;
+    text-decoration: none;
+    transition: 0.5s ease;
+    margin: 0px 45px 80px 100px;
+    transition: 1s ease;
+  }
+
+.butao:hover{
     background-color: #000000 ;
     color:#fff;
     transition: 0.3s ease;
   }
- 
+  .iframe-container{
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; 
+    height: 0;
+  }
+  .iframe-container iframe{
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
   .popup .popuptext {
     visibility: hidden;
-    background-color: transparent;
+    background-color: #555;
     color: #fff;
     text-align: center;
-    border-radius: 50px;
-    padding: 10px 0;
+    border-radius: 6px;
+    padding: 8px 0;
     z-index: 1;
-   
+    bottom: 125%;
+    left: 50%;
+    margin-left: -80px;
     }
     .popup .show {
     visibility: visible;
