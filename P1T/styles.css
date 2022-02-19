@@ -397,6 +397,14 @@ ul#topnav li> ul > li{
     text-align:center;
 }
 
+.imagenstress{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+
+}
+
 #show-menu  {display:none;}
 .open, .close { background-color:inherit; color:#fff; text-align:right; font-weight:normal; font-size:1.5em; padding: 0; position:absolute; top:10%; right:5%; display:none; }
 
