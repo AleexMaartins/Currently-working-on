@@ -123,46 +123,63 @@ def stop_client (client_sock, request):
 # eliminate client from dictionary
 # return response message with result or error message
 
-
 def main():
-	# validate the number of arguments and eventually print error message and exit with error
-	# verify type of of arguments and eventually print error message and exit with error
-	
-	port = ?
-
-	server_socket = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
-	server_socket.bind (("127.0.0.1", port))
-	server_socket.listen (10)
-
-	clients = []
-	create_file ()
-
-	while True:
-		try:
-			available = select.select ([server_socket] + clients, [], [])[0]
-		except ValueError:
-			# Sockets may have been closed, check for that
-			for client_sock in clients:
-				if client_sock.fileno () == -1: client_sock.remove (client) # closed
-			continue # Reiterate select
-
-		for client_sock in available:
-			# New client?
-			if client_sock is server_socket:
-				newclient, addr = server_socket.accept ()
-				clients.append (newclient)
-			# Or an existing client
-			else:
-				# See if client sent a message
-				if len (client_sock.recv (1, socket.MSG_PEEK)) != 0:
-					# client socket has a message
-					##print ("server" + str (client_sock))
-					new_msg (client_sock)
-				else: # Or just disconnected
-					clients.remove (client_sock)
-					clean_client (client_sock)
-					client_sock.close ()
-					break # Reiterate select
-
+    # validate the number of arguments and eventually print error message and exit with error
+    # verify type of of arguments and eventually print error message and exit with error
+    if len(sys.argv) != 2:
+        print("Numero de argumentos invalido\nUso:python3 server.py <porto>")
+        sys.exit(1)
+    try:
+        port = int(sys.argv[1])
+        if port <= 0:
+            print("Porto tem de ser maior que 0")
+            sys.exit(2)
+    except ValueError:
+        print("Porto tem de ser um valor inteiro")
+        sys.exit(2)
+    print_info("A iniciar o servidor")
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(("127.0.0.1", port))
+    server_socket.listen(10)
+    clients = []
+    try:
+        create_file()
+    except OSError:
+        print_info("Erro ao criar o ficheiro")
+        return None
+    print_info("Servidor iniciado")
+    while True:
+        try:
+            available = select.select([server_socket] + clients, [], [])[0]
+        except ValueError:
+            # Sockets may have been closed, check for that
+            for client_sock in clients:
+                if client_sock.fileno() == -1:
+                    clients.remove(client_sock)  # closed
+                continue  # Reiterate select
+        for client_sock in available:
+            # New client?
+            if client_sock is server_socket:
+                newclient, addr = server_socket.accept()
+                clients.append(newclient)
+            # Or an existing client
+            else:
+                try:
+                    # See if client sent a message
+                    if len(client_sock.recv(1, socket.MSG_PEEK)) != 0:
+                        # client socket has a message
+                        # print ("server" + str (client_sock))
+                        new_msg(client_sock)
+                    else:  # Or just disconnected
+                        clients.remove(client_sock)
+                        clean_client(client_sock)
+                        client_sock.close()
+                        break  # Reiterate select
+                except:
+                    print_info("Um cliente saiu inesperadamente")
+                    clients.remove(client_sock)
+                    clean_client(client_sock)
+                    client_sock.close()
+                    break  # Reiterate select
 if __name__ == "__main__":
-	main()
+    main()
