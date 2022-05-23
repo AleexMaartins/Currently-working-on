@@ -140,7 +140,7 @@ def main():
     print_info("A iniciar o servidor")
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(("127.0.0.1", port))
-    server_socket.listen(10)
+    server_socket.listen(10) 
     clients = []
     try:
         create_file()

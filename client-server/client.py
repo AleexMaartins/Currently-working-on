@@ -66,7 +66,7 @@ def main():
     except ValueError:
         print("Porto tem de ser um valor inteiro")
         sys.exit(2)
-    hostname = "127.0.0.1"
+    hostname = "127.0.0.1" 
     if len(sys.argv) == 4:
         ip = sys.argv[3].split(".")
         if len(ip) != 4:
@@ -95,6 +95,6 @@ def main():
     run_client(client_sock, sys.argv[1])
     client_sock.close()
     sys.exit(0)
-	
+
 if __name__ == "__main__":
     main()
