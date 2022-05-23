@@ -8,28 +8,45 @@ import base64
 import csv
 import random
 from common_comm import send_dict, recv_dict, sendrecv_dict
-
 from Crypto.Cipher import AES
 
 # Dicionário com a informação relativa aos clientes
 users = {}
-
+# Nome do ficheiro com a informação do jogo
+f_name = "report.csv"
+# Cabeçalho do ficheiro csv
+header = ["cliente", "lista",
+          "maximo", "minimo"]
+# Compara o socket de cada cliente em users com o socket dado em parâmetro
 # return the client_id of a socket or None
-def find_client_id (client_sock):
-	return None
-
-
+def find_client_id(client_sock):
+    for client in users:
+        if users[client]["socket"] == client_sock:
+            return client
+    return None
 # Função para encriptar valores a enviar em formato json com codificação base64
 # return int data encrypted in a 16 bytes binary string and coded base64
-def encrypt_intvalue (client_id, data):
-	return None
-
-
+def encrypt_intvalue(client_cipher, data):
+    # O cliente não pretende usar encriptação
+    # Isto evita ter de verificar se é para encriptar todas as vezes que o servidor manda
+    # um valor numérico
+    if client_cipher == None:
+        return int(data)
+    # O cliente pretende usar encriptação
+    cipher = AES.new(client_cipher, AES.MODE_ECB)
+    data = cipher.encrypt(bytes("%16d" % (data), "utf-8"))
+    data_tosend = str(base64.b64encode(data), "utf-8")
+    return data_tosend
 # Função para desencriptar valores recebidos em formato json com codificação base64
 # return int data decrypted from a 16 bytes binary string and coded base64
-def decrypt_intvalue (client_id, data):
-	return None
-
+def decrypt_intvalue(client_cipher, data):
+    if client_cipher == None:
+        return int(data)
+    cipher = AES.new(client_cipher, AES.MODE_ECB)
+    data = base64.b64decode(data)
+    data = cipher.decrypt(data)
+    data = int(str(data, "utf-8"))
+    return data
 
 # Incomming message structure:
 # { op = "START", client_id, [cipher] }
@@ -47,48 +64,121 @@ def decrypt_intvalue (client_id, data):
 #
 # Suporte de descodificação da operação pretendida pelo cliente
 #
-def new_msg (client_sock):
-	return None
+def new_msg(client_sock):
+    msg = recv_dict(client_sock)
+    # É esperado que o cliente mande sempre um campo op na mensagem
+    # Caso isso não acontece então o código do cliente tem erros
+    op = msg["op"]
+    if op == "START":
+        new_client(client_sock, msg)
+    elif op == "QUIT":
+        quit_client(client_sock)
+    elif op == "GUESS":
+        guess_client(client_sock, msg)
+    elif op == "STOP":
+        stop_client(client_sock, msg)
+    else:
+        # Não é suposto chegar aqui pois se chegar é porque o cliente tem erros
+        print_info("Operacao desconhecida:" + op)
+        msg = {
+            "op": op,
+            "status": False,
+            "error": "operacao desconhecida"
+        }
+        send_dict(client_sock, msg)
 # read the client request
 # detect the operation requested by the client
 # execute the operation and obtain the response (consider also operations not available)
 # send the response to the client
-
-
 #
 # Suporte da criação de um novo jogador - operação START
 #
-def new_client (client_sock, request):
-	return None
+def new_client(client_sock, request):
+    client_id = request["client_id"]
+    print_info("Cliente a tentar conectar: " + client_id)
+    # Verifica se o cliente já existe
+    if find_client_id(client_sock) != None:
+        # Envia mensagem de erro a dizer que o client já existe
+        msg = {
+            "op": "START",
+            "status": False,
+            "error": "Cliente já existe"
+        }
+        print_info("Erro: Cliente já existe (Cliente: " + client_id + ")")
+        send_msg(client_sock, msg)
+        return None
+    cipher = request["cipher"]
+    if cipher != None:
+        cipher = base64.b64decode(request["cipher"])
+    # Gerar o número secreto e o máximo de tentativas
+    secret_number = random.randint(0, 100)
+    max_attempts = random.randint(10, 30)
+    # Guardar o conteúdo deste cliente num dicionário
+    content = {
+        "socket": client_sock,
+        "cipher": cipher,
+        "guess": secret_number,
+        "max_attempts": max_attempts,
+        "attempts": 0
+    }
+    # Adicionar o cliente e o seu conteúdo ao dicionário de clientes
+    users[client_id] = content
+    # Enviar a mensagem de sucesso
+    msg = {
+        "op": "START",
+        "status": True,
+        "max_attempts": encrypt_intvalue(cipher, max_attempts)
+    }
+    send_msg(client_sock, msg)
+    print_info("Cliente conectado com sucesso")
 # detect the client in the request
 # verify the appropriate conditions for executing this operation
+# obtain the secret number and number of attempts
 # process the client in the dictionary
-# return response message with or without error message
-
-
+# return response message with results or error message
 #
 # Suporte da eliminação de um cliente
-#
-def clean_client (client_sock):
-	return None
-# obtain the client_id from his socket and delete from the dictionary
-
-
+# Devolve True ou False dependendo do sucesso da eliminação do cliente
+def clean_client(client_sock):
+    client = find_client_id(client_sock)
+    if client != None:
+        # Elimina o cliente do dicionário
+        users.pop(client)
+        print_info("Cliente removido com sucesso (Cliente: " + client + ")")
+        return True
+    return False
 #
 # Suporte do pedido de desistência de um cliente - operação QUIT
 #
-def quit_client (client_sock, request):
-	return None
-# obtain the client_id from his socket
-# verify the appropriate conditions for executing this operation
-# process the report file with the QUIT result
-# eliminate client from dictionary
-# return response message with or without error message
-
-
-#
+def quit_client(client_sock):
+    client_id = find_client_id(client_sock)
+    print_info("Cliente " + client_id + " pediu para sair")
+    if client_id != None:
+        # Envia mensagem de sucesso
+        msg = {
+            "op": "QUIT",
+            "status": True
+        }
+        send_msg(client_sock, msg)
+        client = users[client_id]
+        attempts = client["attempts"]
+        guess = client["guess"]
+        max_attempts = client["max_attempts"]
+        update_file(
+            client_id, guess, max_attempts, attempts, "QUIT")
+        clean_client(client_sock)
+        print_info("Cliente " + client_id + " saiu com sucesso")
+    else:
+        # Cliente não está a jogar
+        # Devolver mensagem a indicar o erro
+        msg = {
+            "op": "QUIT",
+            "status": False,
+            "error": "Cliente inexistente"
+        }
+        send_msg(client_sock, msg)
+        print_info("Cliente nao saiu com sucesso. Causa: Cliente nao existe")
 # Suporte da criação de um ficheiro csv com o respectivo cabeçalho
-#
 def create_file ():
 	return None
 # create report csv file with header
@@ -122,6 +212,9 @@ def stop_client (client_sock, request):
 # process the report file with the result
 # eliminate client from dictionary
 # return response message with result or error message
+
+
+
 
 def main():
     # validate the number of arguments and eventually print error message and exit with error
@@ -176,7 +269,7 @@ def main():
                         client_sock.close()
                         break  # Reiterate select
                 except:
-                    print_info("Um cliente saiu inesperadamente")
+                    print_info("O cliente saiu inesperadamente")
                     clients.remove(client_sock)
                     clean_client(client_sock)
                     client_sock.close()
