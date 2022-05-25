@@ -73,13 +73,12 @@ def new_msg(client_sock):
         new_client(client_sock, msg)
     elif op == "QUIT":
         quit_client(client_sock)
-    elif op == "GUESS":
-        guess_client(client_sock, msg)
+   
     elif op == "STOP":
         stop_client(client_sock, msg)
     else:
         # Não é suposto chegar aqui pois se chegar é porque o cliente tem erros
-        print_info("Operacao desconhecida:" + op)
+        print("Operacao desconhecida:" + op)
         msg = {
             "op": op,
             "status": False,
@@ -95,7 +94,7 @@ def new_msg(client_sock):
 #
 def new_client(client_sock, request):
     client_id = request["client_id"]
-    print_info("Cliente a tentar conectar: " + client_id)
+    print("Cliente a tentar conectar: " + client_id)
     # Verifica se o cliente já existe
     if find_client_id(client_sock) != None:
         # Envia mensagem de erro a dizer que o client já existe
@@ -104,7 +103,7 @@ def new_client(client_sock, request):
             "status": False,
             "error": "Cliente já existe"
         }
-        print_info("Erro: Cliente já existe (Cliente: " + client_id + ")")
+        print("Erro: Cliente já existe (Cliente: " + client_id + ")")
         send_msg(client_sock, msg)
         return None
     cipher = request["cipher"]
@@ -130,7 +129,7 @@ def new_client(client_sock, request):
         "max_attempts": encrypt_intvalue(cipher, max_attempts)
     }
     send_msg(client_sock, msg)
-    print_info("Cliente conectado com sucesso")
+    print("Cliente conectado com sucesso")
 # detect the client in the request
 # verify the appropriate conditions for executing this operation
 # obtain the secret number and number of attempts
@@ -144,7 +143,7 @@ def clean_client(client_sock):
     if client != None:
         # Elimina o cliente do dicionário
         users.pop(client)
-        print_info("Cliente removido com sucesso (Cliente: " + client + ")")
+        print("Cliente removido com sucesso (Cliente: " + client + ")")
         return True
     return False
 #
@@ -152,7 +151,7 @@ def clean_client(client_sock):
 #
 def quit_client(client_sock):
     client_id = find_client_id(client_sock)
-    print_info("Cliente " + client_id + " pediu para sair")
+    print("Cliente " + client_id + " pediu para sair")
     if client_id != None:
         # Envia mensagem de sucesso
         msg = {
@@ -167,7 +166,7 @@ def quit_client(client_sock):
         update_file(
             client_id, guess, max_attempts, attempts, "QUIT")
         clean_client(client_sock)
-        print_info("Cliente " + client_id + " saiu com sucesso")
+        print("Cliente " + client_id + " saiu com sucesso")
     else:
         # Cliente não está a jogar
         # Devolver mensagem a indicar o erro
@@ -177,24 +176,35 @@ def quit_client(client_sock):
             "error": "Cliente inexistente"
         }
         send_msg(client_sock, msg)
-        print_info("Cliente nao saiu com sucesso. Causa: Cliente nao existe")
+        print("Cliente nao saiu com sucesso. Causa: Cliente nao existe")
 # Suporte da criação de um ficheiro csv com o respectivo cabeçalho
-def create_file ():
-	return None
-# create report csv file with header
-
-
-#
+def create_file():
+    print("A criar ficheiro csv")
+    # Inicializa o ficheiro csv e escreve o cabeçalho
+    file = open(f_name, "w")
+    writer = csv.writer(file)
+    writer.writerow(header)
+    file.flush()
+    file.close()
+    print("Ficheiro criado com sucesso")
 # Suporte da actualização de um ficheiro csv com a informação do cliente e resultado
-#
-def update_file (client_id, result):
-	return None
-# update report csv file with the result from the client
+def update_file(client_id, secret_number, max_attempts, attempts, result):
+    try:
+        print("A escrever dados de " + client_id + " para o ficheiro")
+        # Abre em modo append para não sobrepor o ficheiro criado anteriormente em create_file
+        file = open(f_name, "a")
+        writer = csv.writer(file)
+        line = [client_id, secret_number, max_attempts, attempts, result]
+        writer.writerow(line)
+        file.flush()
+        file.close()
+        print("Dados escritos com sucesso")
+    except OSError:
+        print("Erro ao escrever no ficheiro")
+        print("linha -> " + client_id + " , " + secret_number +
+                   " , " + max_attempts + " , " + attempts + " , " + result)
 
 
-#
-# Suporte do processamento do número de um cliente - operação NUMBER
-#
 def number_client (client_sock, request):
 	return None
 # obtain the client_id from his socket
@@ -205,16 +215,36 @@ def number_client (client_sock, request):
 #
 # Suporte do pedido de terminação de um cliente - operação STOP
 #
-def stop_client (client_sock):
-	return None
+def stop_client(client_sock, request):   #AINDA FALTA ACABAR
+    client_id = find_client_id(client_sock)
+    print("Cliente " + client_id + " pediu para terminar")
+    # Cliente inexistente
+    if client_id == None:
+        msg = {
+            "op": "QUIT",
+            "status": False,
+            "error": "Cliente inexistente"
+        }
+        send_msg(client_sock, msg)
+        print("Pedido para terminar falhado. Causa: Cliente inexistente")
+        return None
+    client = users[client_id]
+    # Número de jogadas registado pelo servidor
+    cipher = client["cipher"]
+    number = decrypt_intvalue(cipher, request["number"])
+    client_attempts = decrypt_intvalue(cipher, request["attempts"])
+    # Número de jogadas dado pelo cliente não é igual ao do servidor
+
 # obtain the client_id from his socket
 # verify the appropriate conditions for executing this operation
 # process the report file with the result
 # eliminate client from dictionary
 # return response message with result or error message
-
-
-
+def send_msg(client_sock, msg):
+    sent = send_dict(client_sock, msg)
+    if not sent:
+        # DEBUG
+        print("ERRO:mensagem nao enviada")
 
 def main():
     # validate the number of arguments and eventually print error message and exit with error
@@ -230,7 +260,7 @@ def main():
     except ValueError:
         print("Porto tem de ser um valor inteiro")
         sys.exit(2)
-    print_info("A iniciar o servidor")
+    print("A iniciar o servidor")
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(("127.0.0.1", port))
     server_socket.listen(10) 
@@ -238,9 +268,9 @@ def main():
     try:
         create_file()
     except OSError:
-        print_info("Erro ao criar o ficheiro")
+        print("Erro ao criar o ficheiro")
         return None
-    print_info("Servidor iniciado")
+    print("Servidor iniciado")
     while True:
         try:
             available = select.select([server_socket] + clients, [], [])[0]
@@ -269,7 +299,7 @@ def main():
                         client_sock.close()
                         break  # Reiterate select
                 except:
-                    print_info("O cliente saiu inesperadamente")
+                    print("O cliente saiu inesperadamente")
                     clients.remove(client_sock)
                     clean_client(client_sock)
                     client_sock.close()
