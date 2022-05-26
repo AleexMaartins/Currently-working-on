@@ -8,6 +8,7 @@ import base64
 from common_comm import send_dict, recv_dict, sendrecv_dict
 from Crypto.Cipher import AES
 
+
 # Função para encriptar valores a enviar em formato jsos com codificação base64
 # return int data encrypted in a 16 bytes binary string coded in base64
 def encrypt_intvalue(cipherkey, data):
@@ -19,6 +20,8 @@ def encrypt_intvalue(cipherkey, data):
     data = cipher.encrypt(bytes("%16d" % (data), "utf-8"))
     data_tosend = str(base64.b64encode(data), "utf-8")
     return data_tosend
+
+
 # Função para desencriptar valores recebidos em formato json com codificação base64
 # return int data decrypted from a 16 bytes binary strings coded in base64
 def decrypt_intvalue(cipherkey, data):
@@ -29,6 +32,8 @@ def decrypt_intvalue(cipherkey, data):
     data = cipher.decrypt(data)
     data = int(str(data, "utf-8"))
     return data
+
+
 # verify if response from server is valid or is an error message and act accordingly
 def validate_response(client_sock, response):
     status = response["status"]
@@ -37,6 +42,8 @@ def validate_response(client_sock, response):
         client_sock.close()
         sys.exit(3)
     return None
+
+
 # Informa o servidor que um novo cliente está a tentar fazer conexão
 # Retorna o maximo de tentativas
 def new_client(client_sock, client_id, cipher_key):
@@ -52,6 +59,8 @@ def new_client(client_sock, client_id, cipher_key):
     validate_response(client_sock, s_msg)
     max_attempts = decrypt_intvalue(cipher_key, s_msg["max_attempts"])
     return max_attempts
+
+
 # process QUIT operation
 def quit_action(client_sock):
     msg = {
@@ -87,10 +96,38 @@ def stop(client_sock, cipher):
 #
 # Suporte da execução do cliente
 #
-def run_client (client_sock, client_id):
-	return None
-	
+def run_client(client_sock, client_id):
+    cipher_key = cipher()
+    max = 0;
+    min;
+    print("\n Valores inteiros a adicionar para a lista: ")
+    print("Caso queira parar de adicionar valores e receber os valores do minimo e maximo da lista: stop")
+    print("Caso queira sair do programa: quit")
+    
+    while True:
+        resposta = input("->")
+        if resposta.lower() == "quit":
+            quit_action(client_sock)
+            return None
+        elif resposta.lower() == "stop":
+            if max == 0: #verificar na linha 112 se a lista está vazia
+                quit_action(client_sock)
+                return None
+            else:
+                stop(client_sock, cipher_key)
+                return None
+        else:
+            try:
+                value = int(resposta)
+                min = value;
+                if value<min:
+                        
+            except ValueError:
+                print("Valor deve ser um número inteiro")
 
+
+# Pergunta ao utilizador se dejesa usar encriptacao
+# Retorna None caso nao queira e uma cypher key caso queira
 def cipher():
     response = ""
     while response.lower() != "s" and response.lower() != "n":
@@ -100,6 +137,7 @@ def cipher():
     if response.lower() == "s":
         return os.urandom(16)
         
+
 def main():
     # validate the number of arguments and eventually print error message and exit with error
     # verify type of of arguments and eventually print error message and exit with error
@@ -144,6 +182,7 @@ def main():
     run_client(client_sock, sys.argv[1])
     client_sock.close()
     sys.exit(0)
+
 
 if __name__ == "__main__":
     main()
