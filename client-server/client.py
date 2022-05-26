@@ -63,6 +63,14 @@ def quit_action(client_sock):
     client_sock.close()
     sys.exit(4)
 
+def stop(client_sock, cipher):
+    msg = {
+        "op": "STOP",
+    }
+    s_msg = sendrecv_dict(client_sock, msg)
+    validate_response(client_sock, s_msg)
+    print("Obrigado por usar o nosso software!")
+    return True
 # Outcomming message structure:
 # { op = "START", client_id, [cipher] }
 # { op = "QUIT" }
@@ -83,7 +91,15 @@ def run_client (client_sock, client_id):
 	return None
 	
 
-
+def cipher():
+    response = ""
+    while response.lower() != "s" and response.lower() != "n":
+        response = input("Deseja comunicar com encriptacao? (S/N) ->")
+    if response.lower() == "n":
+        return None
+    if response.lower() == "s":
+        return os.urandom(16)
+        
 def main():
     # validate the number of arguments and eventually print error message and exit with error
     # verify type of of arguments and eventually print error message and exit with error

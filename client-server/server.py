@@ -73,7 +73,6 @@ def new_msg(client_sock):
         new_client(client_sock, msg)
     elif op == "QUIT":
         quit_client(client_sock)
-   
     elif op == "STOP":
         stop_client(client_sock, msg)
     else:
@@ -109,16 +108,11 @@ def new_client(client_sock, request):
     cipher = request["cipher"]
     if cipher != None:
         cipher = base64.b64decode(request["cipher"])
-    # Gerar o número secreto e o máximo de tentativas
-    secret_number = random.randint(0, 100)
-    max_attempts = random.randint(10, 30)
+
     # Guardar o conteúdo deste cliente num dicionário
     content = {
         "socket": client_sock,
         "cipher": cipher,
-        "guess": secret_number,
-        "max_attempts": max_attempts,
-        "attempts": 0
     }
     # Adicionar o cliente e o seu conteúdo ao dicionário de clientes
     users[client_id] = content
@@ -126,7 +120,6 @@ def new_client(client_sock, request):
     msg = {
         "op": "START",
         "status": True,
-        "max_attempts": encrypt_intvalue(cipher, max_attempts)
     }
     send_msg(client_sock, msg)
     print("Cliente conectado com sucesso")
@@ -160,11 +153,8 @@ def quit_client(client_sock):
         }
         send_msg(client_sock, msg)
         client = users[client_id]
-        attempts = client["attempts"]
-        guess = client["guess"]
-        max_attempts = client["max_attempts"]
         update_file(
-            client_id, guess, max_attempts, attempts, "QUIT")
+            client_id, "QUIT")
         clean_client(client_sock)
         print("Cliente " + client_id + " saiu com sucesso")
     else:
@@ -188,21 +178,20 @@ def create_file():
     file.close()
     print("Ficheiro criado com sucesso")
 # Suporte da actualização de um ficheiro csv com a informação do cliente e resultado
-def update_file(client_id, secret_number, max_attempts, attempts, result):
+def update_file(client_id, result):
     try:
         print("A escrever dados de " + client_id + " para o ficheiro")
         # Abre em modo append para não sobrepor o ficheiro criado anteriormente em create_file
         file = open(f_name, "a")
         writer = csv.writer(file)
-        line = [client_id, secret_number, max_attempts, attempts, result]
+        line = [client_id, result]
         writer.writerow(line)
         file.flush()
         file.close()
         print("Dados escritos com sucesso")
     except OSError:
         print("Erro ao escrever no ficheiro")
-        print("linha -> " + client_id + " , " + secret_number +
-                   " , " + max_attempts + " , " + attempts + " , " + result)
+        print("linha -> " + client_id + result)
 
 
 def number_client (client_sock, request):
