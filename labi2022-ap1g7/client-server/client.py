@@ -56,10 +56,6 @@ def new_client(client_sock, client_id, cipher_key):
         "client_id": client_id,
         "cipher": key
     }
-    s_msg = sendrecv_dict(client_sock, msg)
-    validate_response(client_sock, s_msg)
-    max_attempts = decrypt_intvalue(cipher_key, s_msg["max_attempts"])
-    return max_attempts
 
 
 # process QUIT operation
@@ -73,9 +69,13 @@ def quit_action(client_sock):
     client_sock.close()
     sys.exit(4)
 
-def stop(client_sock, cipher):
+def stop(client_sock, min ,max, cipher):
+    min = encrypt_intvalue(cipher, min)
+    max = encrypt_intvalue(cipher, max)
     msg = {
         "op": "STOP",
+        "min": min,
+        "max": max
     }
     s_msg = sendrecv_dict(client_sock, msg)
     validate_response(client_sock, s_msg)
@@ -99,9 +99,9 @@ def stop(client_sock, cipher):
 #
 def run_client(client_sock, client_id):
     cipher_key = cipher()
-    maximo = 0;
-    minimo;
-    lista = array.lista[0]
+    maximo = 0
+    minimo = 0
+    lista = []
 
     print("\n Valores inteiros a adicionar para a lista: ")
     print("Caso queira parar de adicionar valores e receber os valores do minimo e maximo da lista: stop")
@@ -117,7 +117,7 @@ def run_client(client_sock, client_id):
                 quit_action(client_sock)
                 return None
             else:
-                stop(client_sock, min, max, cipher_key)
+                stop(client_sock, minimo, maximo, cipher_key)
                 return None
         else:
 

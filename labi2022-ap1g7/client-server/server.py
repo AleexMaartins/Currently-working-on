@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-
+from socket import*
 import sys
-import socket
+import socket 
 import select
 import json
 import base64
@@ -15,8 +15,7 @@ users = {}
 # Nome do ficheiro com a informação do jogo
 f_name = "report.csv"
 # Cabeçalho do ficheiro csv
-header = ["cliente", "lista",
-          "maximo", "minimo"]
+header = ["cliente", "maximo", "minimo"]
 # Compara o socket de cada cliente em users com o socket dado em parâmetro
 # return the client_id of a socket or None
 def find_client_id(client_sock):
