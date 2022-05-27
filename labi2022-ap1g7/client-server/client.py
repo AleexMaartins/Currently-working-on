@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from array import array
 import os
 import sys
 import socket
@@ -98,30 +99,34 @@ def stop(client_sock, cipher):
 #
 def run_client(client_sock, client_id):
     cipher_key = cipher()
-    max = 0;
-    min;
+    maximo = 0;
+    minimo;
+    lista = array.lista[0]
+
     print("\n Valores inteiros a adicionar para a lista: ")
     print("Caso queira parar de adicionar valores e receber os valores do minimo e maximo da lista: stop")
     print("Caso queira sair do programa: quit")
-    
+
     while True:
         resposta = input("->")
         if resposta.lower() == "quit":
             quit_action(client_sock)
             return None
         elif resposta.lower() == "stop":
-            if max == 0: #verificar na linha 112 se a lista está vazia
+            if maximo == 0: #verificar na linha 112 se a lista está vazia
                 quit_action(client_sock)
                 return None
             else:
-                stop(client_sock, cipher_key)
+                stop(client_sock, min, max, cipher_key)
                 return None
         else:
+
             try:
                 value = int(resposta)
-                min = value;
-                if value<min:
-                        
+                lista.append(value)
+                maximo = max(lista)
+                minimo = min(lista)
+                
             except ValueError:
                 print("Valor deve ser um número inteiro")
 
