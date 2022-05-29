@@ -95,6 +95,10 @@ def clean_client(client_sock):
 
 def main():
     port = int(sys.argv[1])
+    if port <= 0:
+        print("Port must be bigger then 0")
+        sys.exit(1)
+    
 
     #create socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

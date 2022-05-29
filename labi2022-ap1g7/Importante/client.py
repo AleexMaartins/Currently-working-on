@@ -33,9 +33,9 @@ def stop(s):
     if(response['op']== "STOP"): 
         if(response['status']== False):
             msg = response['error']
-            if(msg == "Inexistent Client"):
+            if(msg == "Inexistent Client\n"):
                 print(msg + " Make sure to start the client first" )
-            if(msg == "Insuficient Data"):
+            if(msg == "Insuficient Data\n"):
                 print(msg + " Make sure to add numbers first" )
             return None
         else:
@@ -78,10 +78,33 @@ def run_client(client_id, port, host):
             print("Input a legit operation")
             continue
 
+def valid_ip(address):
+    try: 
+        socket.inet_aton(address)
+        return True
+    except:
+        return False
+
 def main():
+    if len(sys.argv) != 3 and len(sys.argv) != 4:
+        print("Error.Wrong number of arguments.")
+        print("Use: python3 client.py <client id> <port> [machine]")
+        sys.exit(1)
+
     client_id = str(sys.argv[1])
     port = int(sys.argv[2])
-    host = str(sys.argv[3])
+
+    if port <= 0:
+        print("Port must be bigger then 0")
+        sys.exit(1)
+    
+    host = "127.0.0.1"
+    if len(sys.argv) == 4:
+        host = str(sys.argv[3])
+        if not valid_ip(host):
+            print("Invalid ip")
+            sys.exit(1)
+
 
     run_client(client_id, port, host)
 
