@@ -20,10 +20,11 @@ def new_msg (client_sock):
             response = { "op": "START", "status": False, "error": "Existent Client" }
             send_dict(client_sock, response)
         else:
+            print("New Client connected. ID: " + client_id)
             response = { "op": "START", "status": True }
             send_dict(client_sock, response)
-            users.put(client_id, [] )
-            clients_aux.put(client_sock, client_id)
+            users[client_id] = []
+            clients_aux[client_sock] = client_id
 
     elif op == "NUMBER":
         client_id = clients_aux.get(client_sock)
@@ -35,7 +36,7 @@ def new_msg (client_sock):
             send_dict(client_sock, response)
             list = users.get(client_id)
             list.append(msg['number'])
-            users.put(client_id, list)
+            users[client_id] =  list
 
     elif op == "STOP":
         client_id = clients_aux.get(client_sock)
@@ -51,7 +52,7 @@ def new_msg (client_sock):
                 list = users.get(client_id)            
                 minimum = min(list) 
                 maximum = max(list) 
-                create_file(client_sock, min, max)
+                create_file(client_sock, minimum, maximum)
                 response = { "op": "STOP", "status": True, "min": minimum, "max": maximum } 
                 send_dict(client_sock, response)
 
@@ -66,14 +67,15 @@ def new_msg (client_sock):
             send_dict(client_sock, response)
 
 
-def create_file (client_sock, min, max):
+
+def create_file (client_sock, min_n, max_n):
     client_id = clients_aux.get(client_sock)
 
     #get current directory
     directory = os.getcwd()
     f = open(directory + "/report.csv", 'w')
     header = ["client_id","min","max"]
-    data = [client_id, min,max]
+    data = [client_id, min_n,max_n]
     # create the csv writer
     writer = csv.writer(f)
 
@@ -84,17 +86,24 @@ def create_file (client_sock, min, max):
     # close the file
     f.close()
 
+def clean_client(client_sock):
+    client_id = clients_aux.get(client_sock)
+    users.pop(client_id)
+    clients_aux.pop(client_sock)
+    
+
+
 def main():
-    port = sys.argv[1]
+    port = int(sys.argv[1])
 
     #create socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(("127.0.0.1", port))
     #listening to the server
-    s.listen(10)
+    s.listen()
+    print("Running...")
 
     clients = []
-    create_file()
 
     while 1:
         try:
@@ -123,3 +132,6 @@ def main():
                     client_sock.close ()
                     break # Reiterate select
 
+
+if __name__ == "__main__":
+	main()
