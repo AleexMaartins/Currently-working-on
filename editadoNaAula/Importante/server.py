@@ -88,7 +88,7 @@ def create_file (client_sock, min_n, max_n):
 
 def clean_client(client_sock):
     client_id = clients_aux.get(client_sock)
-    users.pop(client_id)
+    users.pop(client_id)    
     clients_aux.pop(client_sock)
     
 

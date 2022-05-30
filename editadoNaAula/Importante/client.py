@@ -65,7 +65,6 @@ def run_client(client_id, port, host):
 
     while 1:
         op = input("-> ").upper()
-        
         if op == "START": 
             start(s, client_id)
         elif op == "NUMBER":
@@ -115,6 +114,8 @@ if __name__ == "__main__":
 
 """
 fazer start logo ao inicio
-
+lista, min e max no stop
+nao é suposto dar 2 stop
+fazer clean_client no stop e quit
 
 """
