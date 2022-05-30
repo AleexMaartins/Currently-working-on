@@ -117,5 +117,5 @@ fazer start logo ao inicio
 lista, min e max no stop
 nao é suposto dar 2 stop
 fazer clean_client no stop e quit
-
+update no report.csv com cada stop ao inves de apagar
 """
