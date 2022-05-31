@@ -61,14 +61,19 @@ def run_client(client_id, port, host):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #connect to server
     s.connect ((host, port))
-    print("Operations: START/NUMBER/STOP/QUIT\n")
 
+    start(s, client_id)
+    print("Operations: NUMBER/STOP/QUIT\n")    
     while 1:
         op = input("-> ").upper()
-        if op == "START": 
-            start(s, client_id)
-        elif op == "NUMBER":
-            number(s)
+        
+        if op == "NUMBER":
+                while 1:
+                    if op == "STOP":
+                        stop(s)
+                    elif op == "QUIT":
+                        quit(s)
+                    number(s)
         elif op == "STOP":
             stop(s)
         elif op == "QUIT":

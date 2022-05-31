@@ -32,11 +32,11 @@ def new_msg (client_sock):
             response = { "op": "NUMBER", "status": False, "error": "Inexistent Client" }
             send_dict(client_sock, response)
         else:
-            response = { "op": "NUMBER", "status": True }
-            send_dict(client_sock, response)
-            list = users.get(client_id)
-            list.append(msg['number'])
-            users[client_id] =  list
+                response = { "op": "NUMBER", "status": True }
+                send_dict(client_sock, response)
+                list = users.get(client_id)
+                list.append(msg['number'])
+                users[client_id] =  list
 
     elif op == "STOP":
         client_id = clients_aux.get(client_sock)
