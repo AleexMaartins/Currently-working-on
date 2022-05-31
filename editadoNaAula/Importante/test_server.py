@@ -12,7 +12,7 @@ users = {}
 clients_aux = {}
 
 
-def new_msg (client_sock):
+def test_new_msg (client_sock):
     msg = recv_dict(client_sock)
     op = msg['op']
    
@@ -54,7 +54,7 @@ def new_msg (client_sock):
                 list = users.get(client_id)            
                 minimum = min(list) 
                 maximum = max(list) 
-                create_file(client_sock,list, minimum, maximum)
+                test_create_file(client_sock,list, minimum, maximum)
                 response = { "op": "STOP", "status": True, "min": minimum, "max": maximum } 
                 send_dict(client_sock, response)
 
@@ -69,7 +69,7 @@ def new_msg (client_sock):
 
 
 
-def create_file (client_sock,list, min_n, max_n):
+def test_create_file (client_sock,list, min_n, max_n):
     client_id = clients_aux.get(client_sock)
 
     #get current directory
@@ -93,14 +93,14 @@ def create_file (client_sock,list, min_n, max_n):
     # close the file
     f.close()
 
-def clean_client(client_sock):
+def test_clean_client(client_sock):
     client_id = clients_aux.get(client_sock)
     users.pop(client_id)    
     clients_aux.pop(client_sock)
     
 
 
-def main():
+def test_main():
     port = int(sys.argv[1])
     if port <= 0:
         print("Port must be bigger then 0")
@@ -136,12 +136,12 @@ def main():
                 if len (client_sock.recv (1, socket.MSG_PEEK)) != 0:
                     # client socket has a message
                     ##print ("server" + str (client_sock))
-                    new_msg (client_sock)
+                    test_new_msg (client_sock)
                 else: # Or just disconnected
                     clients.remove (client_sock)
-                    clean_client (client_sock)
+                    test_clean_client (client_sock)
                     client_sock.close ()
                     break # Reiterate select
                   
-if __name__ == "__main__":
-	main()
+if __name__ == "__test_main__":
+	test_main()

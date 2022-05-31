@@ -3,9 +3,9 @@ import json
 import sys
 from common_comm import send_dict, recv_dict, sendrecv_dict
 
-list=[]
+list = []
 
-def start(s, client_id):
+def test_start(s, client_id):
     start_request = { "op": "START", "client_id": client_id }
     msg = sendrecv_dict(s, start_request)
 
@@ -15,7 +15,7 @@ def start(s, client_id):
     print("Server started successfully")
     return None
     
-def number(s,number):
+def test_number(s,number):
     number_request = { "op": "NUMBER", "number": number }
     response = sendrecv_dict (s, number_request)
 
@@ -26,7 +26,7 @@ def number(s,number):
     print("Number added successfully")
     return None
 
-def stop(s):
+def test_stop(s):
     stop_request = { "op": "STOP" }
     response = sendrecv_dict (s, stop_request)
 
@@ -42,7 +42,7 @@ def stop(s):
             print("list: " + str(list) +", min: " + str(response['min']) + ", max: " + str(response['max']))
             sys.exit(0)
 
-def quit(s):
+def test_quit(s):
     quit_request = { "op": "QUIT" }
     response = sendrecv_dict (s, quit_request)
     
@@ -56,17 +56,17 @@ def quit(s):
     
  
 
-def run_client(client_id, port, host):
+def test_run_client(client_id, port, host):
     #create socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #connect to server
     s.connect ((host, port))
-    start(s, client_id)
+    test_start(s, client_id)
     print("Operations: STOP/QUIT\n")    
     while 1:
         op = str(input("Add number-> ")).upper()
         if op == "STOP":
-            stop(s)
+            test_stop(s)
         elif op == "QUIT":
             quit(s)
         else:
@@ -74,20 +74,20 @@ def run_client(client_id, port, host):
             try:
                 op = int(op)
                 list.append(op)
-                number(s,op)
+                test_number(s,op)
             except:
                 print("Input a legit operation")
                 continue
             
 
-def valid_ip(address):
+def test_valid_ip(address):
     try: 
         socket.inet_aton(address)
         return True
     except:
         return False
 
-def main():
+def test_main():
     if len(sys.argv) != 3 and len(sys.argv) != 4:
         print("Error.Wrong number of arguments.")
         print("Use: python3 client.py <client id> <port> [machine]")
@@ -103,15 +103,15 @@ def main():
     host = "localhost"
     if len(sys.argv) == 4:
         host = sys.argv[3]
-        if not valid_ip(host):
+        if not test_valid_ip(host):
             print("Invalid ip")
             sys.exit(1)
 
 
-    run_client(client_id, port, host)
+    test_run_client(client_id, port, host)
     sys.exit(0)
-if __name__ == "__main__":
-	main()
+if __name__ == "__test_main__":
+	test_main()
 
 
 
