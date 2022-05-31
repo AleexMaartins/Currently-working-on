@@ -55,7 +55,6 @@ def new_msg (client_sock):
                 maximum = max(list) 
                 create_file(client_sock,list, minimum, maximum)
                 response = { "op": "STOP", "status": True, "min": minimum, "max": maximum } 
-                print(list)
                 send_dict(client_sock, response)
 
     elif op == "QUIT":
@@ -81,7 +80,7 @@ def create_file (client_sock,list, min_n, max_n):
         f = open(directory + "/report.csv", 'w')
     else:
         f = open(directory + "/report.csv", 'a')
-    header = ["client_id"," list"," min "," max"]
+    header = ["client_id"," list"," min "," max:"]
     data = [client_id,list,min_n,max_n]
     # create the csv writer
     writer = csv.writer(f)

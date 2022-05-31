@@ -3,6 +3,7 @@ import json
 import sys
 from common_comm import send_dict, recv_dict, sendrecv_dict
 
+list=[]
 
 def start(s, client_id):
     start_request = { "op": "START", "client_id": client_id }
@@ -38,7 +39,7 @@ def stop(s):
                 print(msg + " Make sure to add numbers first" )
             return None
         else:
-            print("min: " + str(response['min']) + " max: " + str(response['max']))
+            print("list: " + str(list) +", min: " + str(response['min']) + ", max: " + str(response['max']))
             sys.exit(0)
 
 def quit(s):
@@ -60,7 +61,6 @@ def run_client(client_id, port, host):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #connect to server
     s.connect ((host, port))
-
     start(s, client_id)
     print("Operations: STOP/QUIT\n")    
     while 1:
@@ -70,10 +70,11 @@ def run_client(client_id, port, host):
         elif op == "QUIT":
             quit(s)
         else:
+            #we're using try-except because, in case of "op" not beeing int the program would crash
             try:
                 op = int(op)
+                list.append(op)
                 number(s,op)
-
             except:
                 print("Input a legit operation")
                 continue
