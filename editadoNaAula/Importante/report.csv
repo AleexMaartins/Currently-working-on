@@ -1,8 +1,0 @@
-client_id ,list ,min ,max
-Tomas,"[2, 3, 4, 5]",2,5
-client_id, list, min , max
-Tomas,"[2, 3, 4, 5]",2,5
-client_id, list, min , max
-Tomas,"[2, 3, 4, 5]",2,5
-client_id, list, min , max
-Alex,"[1, 999999999999999999999999, 0, 420, 420, 420, 420]",0,999999999999999999999999
