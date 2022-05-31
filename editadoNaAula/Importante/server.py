@@ -6,6 +6,7 @@ import sys
 import os
 import csv
 from common_comm import send_dict, recv_dict, sendrecv_dict
+from pathlib import Path
 
 users = {}
 clients_aux = {}
@@ -38,10 +39,10 @@ def new_msg (client_sock):
                 list.append(msg['number'])
                 users[client_id] =  list
 
-    elif op == "STOP":
+    elif op == "STOP": 
         client_id = clients_aux.get(client_sock)
 
-        if client_id not in users.keys():
+        if client_id not in users.keys(): 
             response = { "op": "STOP", "status": False, "error": "Inexistent Client" }
             send_dict(client_sock, response)
         else:
@@ -52,10 +53,10 @@ def new_msg (client_sock):
                 list = users.get(client_id)            
                 minimum = min(list) 
                 maximum = max(list) 
-                create_file(client_sock, minimum, maximum)
+                create_file(client_sock,list, minimum, maximum)
                 response = { "op": "STOP", "status": True, "min": minimum, "max": maximum } 
                 send_dict(client_sock, response)
-
+                
 
     elif op == "QUIT":
         client_id = clients_aux.get(client_sock)
@@ -68,14 +69,20 @@ def new_msg (client_sock):
 
 
 
-def create_file (client_sock, min_n, max_n):
+def create_file (client_sock,list, min_n, max_n):
     client_id = clients_aux.get(client_sock)
 
     #get current directory
     directory = os.getcwd()
-    f = open(directory + "/report.csv", 'w')
-    header = ["client_id","min","max"]
-    data = [client_id, min_n,max_n]
+    
+    my_file = Path(directory + "/report.csv")
+    
+    if not my_file.is_file():
+        f = open(directory + "/report.csv", 'w')
+    else:
+        f = open(directory + "/report.csv", 'a')
+    header = ["client_id"," list"," min "," max"]
+    data = [client_id,list,min_n,max_n]
     # create the csv writer
     writer = csv.writer(f)
 

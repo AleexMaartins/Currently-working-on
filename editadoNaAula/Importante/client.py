@@ -14,8 +14,7 @@ def start(s, client_id):
     print("Server started successfully")
     return None
     
-def number(s):
-    number = int(input("number-> "))
+def number(s,number):
     number_request = { "op": "NUMBER", "number": number }
     response = sendrecv_dict (s, number_request)
 
@@ -33,14 +32,14 @@ def stop(s):
     if(response['op']== "STOP"): 
         if(response['status']== False):
             msg = response['error']
-            if(msg == "Inexistent Client\n"):
-                print(msg + " Make sure to start the client first" )
-            if(msg == "Insuficient Data\n"):
+            if(msg == "Inexistent Client"):
+                print(msg + " Make sure to start the client first\n" )
+            if(msg == "Insuficient Data"):
                 print(msg + " Make sure to add numbers first" )
             return None
         else:
-            print("min: " + str(response['min']) + " max: " + str(response['max']))
-            return None
+            print("list: " + str(response['list']) +"min: " + str(response['min']) + " max: " + str(response['max']))
+            sys.exit(0)
 
 def quit(s):
     quit_request = { "op": "QUIT" }
@@ -63,24 +62,22 @@ def run_client(client_id, port, host):
     s.connect ((host, port))
 
     start(s, client_id)
-    print("Operations: NUMBER/STOP/QUIT\n")    
+    print("Operations: STOP/QUIT\n")    
     while 1:
-        op = input("-> ").upper()
-        
-        if op == "NUMBER":
-                while 1:
-                    if op == "STOP":
-                        stop(s)
-                    elif op == "QUIT":
-                        quit(s)
-                    number(s)
-        elif op == "STOP":
+        op = str(input("Add number-> ")).upper()
+        if op == "STOP":
             stop(s)
         elif op == "QUIT":
             quit(s)
-        else: 
-            print("Input a legit operation")
-            continue
+        else:
+            try:
+                op = int(op)
+                number(s,op)
+
+            except:
+                print("Input a legit operation")
+                continue
+            
 
 def valid_ip(address):
     try: 

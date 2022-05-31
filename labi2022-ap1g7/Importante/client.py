@@ -67,7 +67,7 @@ def run_client(client_id, port, host):
         op = input("-> ").upper()
         
         if op == "START": 
-            start(s, client_id)
+            start(s, client_id) 
         elif op == "NUMBER":
             number(s)
         elif op == "STOP":
