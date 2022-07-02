@@ -1,4 +1,4 @@
-#cv
+from stringprep import in_table_c21_c22
 import cherrypy
 import sqlite3 as sql
 import sys
@@ -28,12 +28,19 @@ conf = {"/":
        
 		}
 }
+def databasecreate(db):
+    db.execute("CREATE TABLE pic(nome TEXT, pass TEXT, pic TEXT)")
 
-def upload( f1, f2):
-        im1 = Image.open(f1)
-        im2 = Image.open(f2)
-        p1 = im1.getpixel( (x+0, y+0) )
-        p2 = im2.getpixel( (x,y) )
+    
+    return None
+
+def upload(i1, i2):
+        im1 = Image.open("uploads/" +i1.filename)
+        im2 = Image.open("uploads/" +i2.filename)
+        x, y = im1.size
+        p1 = im1.getpixel( (0+x/4, 0+y/4) )
+        x, y = im2.size
+        p2 = im2.getpixel( (0, 0) )
         width, height = im1.size
         for x in range(width):
             for y in range(height):
@@ -48,7 +55,12 @@ def upload( f1, f2):
         im1.save("img/Result.jpg")
         im1.close()
         im2.close()
-        return json.dumps()
+        return None
+
+class log(object):
+    @cherrypy.expose
+    def index(self):
+        return None
 
 class image(object):
     
@@ -56,15 +68,26 @@ class image(object):
     def index(self):
         return open("html/image.html")
     @cherrypy.expose
-    def done(self, myFile):
-        fo = open("uploads/" + myFile.filename, "wb")
+    def done(self, i1, i2):
+        print("done")
+        fo = open("uploads/" + i1.filename, "wb")
         while True:
-            data = myFile.file.read(8192)
+            data = i1.file.read(8192)
             if not data: break
-        fo.write(data)
+            fo.write(data)
+        fo.close()
+
+        print("done")
+        fo = open("uploads/" + i2.filename, "wb")
+        while True:
+            data = i2.file.read(8192)
+            if not data: break
+            fo.write(data)
         fo.close()
         print("done")
-        return None
+        upload(i1, i2)
+        print("done")
+        return print("done")
 
     
     
@@ -74,9 +97,18 @@ class Root:
     
     def __init__(self):
         self.image = image()
+        self.log = log()
         
     @cherrypy.expose
     def index(self):
+        db = sql.connect("database/database.db")
+        try:
+            db.execute("SELECT * FROM pic")
+        except(db.DatabaseError):
+            databasecreate(db)
+            
+        
+            
         return open("html/index.html")
 if __name__ == "__main__":
     cherrypy.config.update({'server.socket_port': 10017})

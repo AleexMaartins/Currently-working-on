@@ -1,47 +1,73 @@
-//cv
+var im1;
+var im2;
 
 function updatePhoto(event) {
-    alert("1");
+
 
     var reader = new FileReader();
-    reader = iml(event);
+    reader = iml1(event);
 
 
-    alert("777");
-    sendFile(event.target.files[0]);
+    im1 = event.target.files[0];
     //Libertar recursos da imagem selecionada
-    windowURL.revokeObjectURL(picURL);
+
 
 }
 
-function iml(event) {
-    alert("ola");
+function iml1(event) {
     //Criar uma imagem
     var img = new Image();
-    img = im(img);
+    img = im1(img);
 
 }
 
-function im(img) {
-    canvas = document.getElementById("photo");
+function im1(img) {
+    canvas = document.getElementById("photo1");
     ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, 530, 400);
-    alert("1");
+
+
+}
+
+function updatePhoto2(event) {
+
+    var reader = new FileReader();
+    reader = iml2(event);
+
+
+    im2 = event.target.files[0];
+    //Libertar recursos da imagem selecionada
+
+}
+
+function iml2(event) {
+    //Criar uma imagem
+    var img = new Image();
+    img = im2(img);
+
+}
+
+function im2(img) {
+    canvas = document.getElementById("photo2");
+    ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, 530, 400);
 
 }
 
 
 
 
-function sendFile(file) {
-    alert("3");
+function sendFile() {
     var data = new FormData();
-    data.append("myFile", file);
+    data.append("i1", im1);
+    data.append("i2", im2);
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/image/done");
+    xhr.open("POST", "done");
     xhr.upload.addEventListener("progress", updateProgress, false);
     xhr.send(data);
 }
+
+
 
 function updateProgress(evt) {
     if (evt.loaded == evt.total) alert("Okay");
