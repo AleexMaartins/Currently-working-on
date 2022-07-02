@@ -551,6 +551,7 @@ pre code {
 
 .pre-scrollable {
   max-height: 340px;
+
   overflow-y: scroll;
 }
 
@@ -11327,6 +11328,7 @@ p {
 }
 
 .navbar.affix.bg-light {
+  transition: 1s;
   background: #fff !important;
 }
 
