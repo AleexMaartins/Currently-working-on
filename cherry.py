@@ -30,7 +30,18 @@ conf = {"/":
 }
 def databasecreate(db):
     db.execute("CREATE TABLE pic(nome TEXT, pass TEXT, pic TEXT)")
+    db.close()
 
+
+    
+    return None
+
+def  create(user, pas):
+    db = sql.connect("database/database.db")
+    db.execute("UPDATE pic SET * nome = "+ user+" pass ="+pas)
+    db.close()
+
+  
     
     return None
 
@@ -61,6 +72,10 @@ class log(object):
     @cherrypy.expose
     def index(self):
         return None
+    @cherrypy.expose
+    def cre(self, user, pas):
+        create(user, pas)
+        return print("done")
 
 class image(object):
     
@@ -106,7 +121,8 @@ class Root:
             db.execute("SELECT * FROM pic")
         except(db.DatabaseError):
             databasecreate(db)
-            
+        
+        db.close()   
         
             
         return open("html/index.html")
