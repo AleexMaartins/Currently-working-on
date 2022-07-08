@@ -38,7 +38,7 @@
 
 .submit-btn {
     width: 100%;
-    background: linear-gradient(45deg, black, white);
+    background: linear-gradient(45deg, rgb(178, 54, 54), rgba(255, 255, 255, 0.392));
     margin-top: 20px;
     padding: 10px;
     font-size: 20px;
